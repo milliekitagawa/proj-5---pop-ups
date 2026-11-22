@@ -5,7 +5,6 @@ function initializeGame() {
   const windows = document.querySelector("#windows");
   const vacuum = document.querySelector("#vacuum");
   const hint = document.querySelector("#tool-hint");
-  const count = document.querySelector("#count");
   const ending = document.querySelector("#ending");
   const restart = document.querySelector("#restart");
 
@@ -48,10 +47,6 @@ function initializeGame() {
     popup.element.style.top = popup.y + "px";
   }
 
-  function updateCount() {
-    count.textContent = popups.length + (popups.length === 1 ? " window open" : " windows open");
-  }
-
   function selectPopup(popup) {
     selected?.element.classList.remove("selected");
     selected = popup;
@@ -77,7 +72,6 @@ function initializeGame() {
     popups.push(popup);
     placePopup(popup, x, y);
     selectPopup(popup);
-    updateCount();
 
     // Ignore clicks produced at the end of a mouse drag.
     let pressStart;
@@ -219,7 +213,6 @@ function initializeGame() {
     popup.element.remove();
     popups = popups.filter(window => window !== popup);
     if (selected === popup) selectPopup(popups.findLast(window => !window.suction) ?? null);
-    updateCount();
     checkCompletion();
   }
 

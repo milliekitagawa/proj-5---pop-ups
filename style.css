@@ -11,24 +11,12 @@ body { margin: 0; overflow: hidden; }
 #desktop {
   position: relative;
   isolation: isolate;
-  height: calc(100dvh - 44px);
+  height: 100dvh;
   overflow: hidden;
   background-color: #245d59;
   background-image: radial-gradient(#b6e5ca38 1px, transparent 1px);
   background-size: 8px 8px;
 }
-.taskbar {
-  height: 44px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 0 16px;
-  background: var(--paper);
-  border-top: 3px solid var(--ink);
-  font-size: .875rem;
-}
-.brand { font-weight: bold; }
 .popup {
   position: absolute;
   width: min(320px, calc(100% - 12px));
