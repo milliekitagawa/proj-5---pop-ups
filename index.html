@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pop-Up Panic</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main id="desktop" aria-label="Pop-Up Panic desktop">
+    <div id="vacuum" hidden>
+      <svg viewBox="0 0 72 48" width="72" height="48" aria-hidden="true">
+        <path d="M56 28V13Q56 5 46 5H24Q16 5 16 14V33" fill="none" stroke="#111f29" stroke-width="8"/>
+        <path d="M56 28V13Q56 5 46 5H24Q16 5 16 14V33" fill="none" stroke="#fbdb8c" stroke-width="3"/>
+        <path d="M5 42L9 33H23L29 42Z" fill="#a6f1db" stroke="#111f29" stroke-width="3"/>
+        <path d="M35 36Q35 22 48 22H57Q66 22 68 37L64 42H37Z" fill="#fa9578" stroke="#111f29" stroke-width="3"/>
+        <path d="M42 32H53" stroke="#fff0c6" stroke-width="3"/>
+        <circle cx="58" cy="39" r="7" fill="#223546" stroke="#111f29" stroke-width="2"/>
+        <circle cx="58" cy="39" r="2" fill="#fbdb8c"/>
+      </svg>
+      <span class="tool-hint" id="tool-hint" role="status"></span>
+    </div>
+    <div id="windows"></div>
+    <section id="ending" hidden>
+      <h1>Well, that sucks.</h1>
+      <button id="restart" type="button">Restart</button>
+    </section>
+  </main>
+  <footer class="taskbar">
+    <span class="brand">Pop-Up Panic</span>
+    <span id="count"></span>
+  </footer>
+</body>
+</html>
