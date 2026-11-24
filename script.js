@@ -7,6 +7,8 @@ function initializeGame() {
   const hint = document.querySelector("#tool-hint");
   const ending = document.querySelector("#ending");
   const restart = document.querySelector("#restart");
+  const annoyance = document.querySelector("#annoyance");
+  const spawnRate = document.querySelector("#spawn-rate");
 
   const MAX_POPUPS = 12;
   const STEP = 26;
@@ -26,7 +28,7 @@ function initializeGame() {
   let selected = null;
   let front = 0;
   let attempts = 0;
-  let discovered = false;
+  let spawned = 0;
   let exposed = false;
   let equipped = false;
   let active = false;
@@ -92,14 +94,21 @@ function initializeGame() {
       if (popup.suction || (event.detail && dragged)) return;
       if (event.target.closest("button")) {
         attempts++;
-        if (popups.length >= MAX_POPUPS) return;
-        const message = messages[attempts - 1] ?? "Still here.";
+        const batchSize = Math.min(Number(annoyance.value), MAX_POPUPS - popups.length);
+        if (!batchSize) return;
         const shift = attempts % 2 ? 29 : -44;
         const maxX = Math.max(0, desktop.clientWidth - element.offsetWidth - 5);
         const maxY = Math.max(0, desktop.clientHeight - element.offsetHeight - 6);
-        const x = clamp(popup.x + shift, maxX);
-        const y = clamp(popup.y + 31, maxY);
-        createPopup("System Notice", message, x === popup.x ? popup.x - shift : x, y === popup.y ? popup.y - 36 : y);
+        for (let i = 1; i <= batchSize; i++) {
+          // Advance the message once per new window so a batch can't skip the hint.
+          const message = messages[spawned] ?? "Still here.";
+          spawned++;
+          const x = clamp(popup.x + shift * i, maxX);
+          const y = clamp(popup.y + 31 * i, maxY);
+          createPopup("System Notice", message,
+            x === popup.x ? popup.x - shift * i : x,
+            y === popup.y ? popup.y - 36 * i : y);
+        }
         checkVacuumDiscovery();
       } else {
         selectPopup(popup);
@@ -122,7 +131,6 @@ function initializeGame() {
       !suction && x < home.x + 72 && x + element.offsetWidth > home.x &&
       y < home.y + 48 && y + element.offsetHeight > home.y
     );
-    if (exposed) discovered = true;
     vacuum.hidden = !exposed;
     if (exposed) {
       hint.innerHTML = "<kbd>E</kbd> Pick up";
@@ -145,7 +153,7 @@ function initializeGame() {
   }
 
   function equipVacuum() {
-    if (finished || !discovered || (!equipped && !exposed)) return;
+    if (finished || (!equipped && !exposed)) return;
     equipped = !equipped;
     vacuum.classList.toggle("equipped", equipped);
     if (equipped) {
@@ -267,8 +275,8 @@ function initializeGame() {
     windows.replaceChildren();
     popups = [];
     selected = null;
-    front = attempts = 0;
-    discovered = exposed = equipped = finished = false;
+    front = attempts = spawned = 0;
+    exposed = equipped = finished = false;
     ending.hidden = true;
     vacuum.hidden = true;
     vacuum.classList.remove("equipped");
@@ -301,6 +309,7 @@ function initializeGame() {
     if (finished || event.altKey || event.ctrlKey || event.metaKey) return;
     const direction = directions[event.key];
     if (Array.isArray(direction)) {
+      if (event.target === annoyance) return; // Let a focused slider handle its own arrow keys.
       event.preventDefault(); // Native key repeat keeps held arrows moving.
       moveSelectedPopup(...direction);
     } else if (event.code === "KeyE" && !event.repeat) {
@@ -325,6 +334,12 @@ function initializeGame() {
     else checkVacuumDiscovery();
   });
   restart.addEventListener("click", reset);
+  function updateSpawnRate() {
+    const amount = Number(annoyance.value);
+    spawnRate.value = amount === 1 ? "1 pop-up per click" : amount + " pop-ups per click";
+  }
+  annoyance.addEventListener("input", updateSpawnRate);
+  updateSpawnRate();
   reset();
 }
 
